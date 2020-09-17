@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssh
+spec:
+  selector:
+    matchLabels:
+      app: ssh
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ssh
+    spec:
+      volumes:
+      - name: pubkey
+        configMap:
+          name: auth
+      containers:
+      - name: ssh
+        image: boolman/ssh:1.0
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 128Mi
+          requests:
+            cpu: 0.2
+            memory: 64Mi
+        volumeMounts:
+          - name: pubkey
+            mountPath: /home/jump/.ssh
+        ports:
+        - containerPort: 22
